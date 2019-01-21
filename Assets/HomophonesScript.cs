@@ -140,7 +140,7 @@ public class HomophonesScript : MonoBehaviour
         }
         selectedIndices.Clear();
         Debug.LogFormat("[Homophones #{0}] The button colours from left to right are: {1}.", moduleId, string.Join(", ", buttonInformation.Select((x) => x.buttonColour).ToArray()));
-        Debug.LogFormat("[Homophones #{0}] The correct button labels from left to red are: {1}.", moduleId, string.Join(", ", correctButtonLabel.Select((x) => x).ToArray()));
+        Debug.LogFormat("[Homophones #{0}] The correct button labels from left to right are: {1}.", moduleId, string.Join(", ", correctButtonLabel.Select((x) => x).ToArray()));
 
         for(int i = 0; i < 4; i++)
         {
