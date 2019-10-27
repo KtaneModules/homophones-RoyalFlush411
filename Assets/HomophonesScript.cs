@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
 
@@ -303,6 +304,104 @@ public class HomophonesScript : MonoBehaviour
                 Debug.LogFormat("[Homophones #{0}] The button labels are no longer set correctly.", moduleId);
             }
             numbersSet = false;
+        }
+    }
+
+    //twitch plays
+    private bool setsAlright(string s1, string s2, string s3, string s4)
+    {
+        string[] numbers = {"0","1","2","3","4","5","6","7","8","9"};
+        string[] strings = { s1, s2, s3, s4 };
+        for(int i = 0; i < 4; i++)
+        {
+            if (!numbers.Contains(strings[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    private bool pressAlright(string s1, string s2, string s3, string s4)
+    {
+        string[] numbers = { "1", "2", "3", "4" };
+        string[] strings = { s1, s2, s3, s4 };
+        for (int i = 0; i < 4; i++)
+        {
+            if (!numbers.Contains(strings[i]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} cycle [Cycles through all 4 words] | !{0} set <1> <2> <3> <4> [Sets all the button's numbers from left to right] | !{0} press <bt1> <bt2> <bt3> <bt4> [Presses the 4 specified buttons in specified order of 'bt1' to 'bt4'] | Valid buttons are 1-4 with 1 leftmost and 4 rightmost";
+    #pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        string[] parameters = command.Split(' ');
+        if (Regex.IsMatch(parameters[0], @"^\s*cycle\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            if (parameters.Length == 1)
+            {
+                yield return null;
+                yield return new WaitForSeconds(0.5f);
+                cycleButton.OnInteract();
+                for(int i = 0; i < 3; i++)
+                {
+                    yield return "trycancel Word cycling cancelled due to a cancel request.";
+                    yield return new WaitForSeconds(2f);
+                    cycleButton.OnInteract();
+                }
+            }
+            yield break;
+        }
+        if (Regex.IsMatch(parameters[0], @"^\s*set\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            if (parameters.Length == 5)
+            {
+                if(setsAlright(parameters[1], parameters[2], parameters[3], parameters[4]))
+                {
+                    yield return null;
+                    while (!buttonTextMesh[0].text.Equals(parameters[1])) { yield return new WaitForSeconds(0.1f); numbersUp[0].OnInteract(); }
+                    while (!buttonTextMesh[1].text.Equals(parameters[2])) { yield return new WaitForSeconds(0.1f); numbersUp[1].OnInteract(); }
+                    while (!buttonTextMesh[2].text.Equals(parameters[3])) { yield return new WaitForSeconds(0.1f); numbersUp[2].OnInteract(); }
+                    while (!buttonTextMesh[3].text.Equals(parameters[4])) { yield return new WaitForSeconds(0.1f); numbersUp[3].OnInteract(); }
+                }
+            }
+            yield break;
+        }
+        if (Regex.IsMatch(parameters[0], @"^\s*press\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            if (parameters.Length == 5)
+            {
+                if (pressAlright(parameters[1], parameters[2], parameters[3], parameters[4]))
+                {
+                    yield return null;
+                    for(int i = 1; i < 5; i++)
+                    {
+                        if (parameters[i].Equals("1"))
+                        {
+                            mainButtons[0].OnInteract();
+                        }
+                        else if (parameters[i].Equals("2"))
+                        {
+                            mainButtons[1].OnInteract();
+                        }
+                        else if (parameters[i].Equals("3"))
+                        {
+                            mainButtons[2].OnInteract();
+                        }
+                        else if (parameters[i].Equals("4"))
+                        {
+                            mainButtons[3].OnInteract();
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+            }
+            yield break;
         }
     }
 }
