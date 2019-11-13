@@ -336,7 +336,7 @@ public class HomophonesScript : MonoBehaviour
     }
 
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} cycle [Cycles through all 4 words] | !{0} set <1> <2> <3> <4> [Sets all the button's numbers from left to right] | !{0} press <bt1> <bt2> <bt3> <bt4> [Presses the 4 specified buttons in specified order of 'bt1' to 'bt4'] | Valid buttons are 1-4 with 1 leftmost and 4 rightmost";
+    private readonly string TwitchHelpMessage = @"!{0} cycle [Cycles through all 4 words] | !{0} set <btn> <#> [Sets the specified button's number to '#'] | !{0} set all <#1> <#2> <#3> <#4> [Sets all buttons numbers to '#1' through '#4' from left to right] | !{0} press <btn>... [Presses the specified button(s)] | Valid buttons are 1-4 with 1 leftmost and 4 rightmost";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
@@ -359,15 +359,29 @@ public class HomophonesScript : MonoBehaviour
         }
         if (Regex.IsMatch(parameters[0], @"^\s*set\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
-            if (parameters.Length == 5)
+            if (parameters.Length == 6)
             {
-                if(setsAlright(parameters[1], parameters[2], parameters[3], parameters[4]))
+                if (Regex.IsMatch(parameters[1], @"^\s*all\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                {
+                    if (setsAlright(parameters[2], parameters[3], parameters[4], parameters[5]))
+                    {
+                        yield return null;
+                        while (!buttonTextMesh[0].text.Equals(parameters[2])) { yield return new WaitForSeconds(0.1f); numbersUp[0].OnInteract(); }
+                        while (!buttonTextMesh[1].text.Equals(parameters[3])) { yield return new WaitForSeconds(0.1f); numbersUp[1].OnInteract(); }
+                        while (!buttonTextMesh[2].text.Equals(parameters[4])) { yield return new WaitForSeconds(0.1f); numbersUp[2].OnInteract(); }
+                        while (!buttonTextMesh[3].text.Equals(parameters[5])) { yield return new WaitForSeconds(0.1f); numbersUp[3].OnInteract(); }
+                    }
+                }
+            }
+            else if(parameters.Length == 3)
+            {
+                if(pressAlright(parameters[1], "1", "1", "1") && setsAlright(parameters[2], "0", "0", "0"))
                 {
                     yield return null;
-                    while (!buttonTextMesh[0].text.Equals(parameters[1])) { yield return new WaitForSeconds(0.1f); numbersUp[0].OnInteract(); }
-                    while (!buttonTextMesh[1].text.Equals(parameters[2])) { yield return new WaitForSeconds(0.1f); numbersUp[1].OnInteract(); }
-                    while (!buttonTextMesh[2].text.Equals(parameters[3])) { yield return new WaitForSeconds(0.1f); numbersUp[2].OnInteract(); }
-                    while (!buttonTextMesh[3].text.Equals(parameters[4])) { yield return new WaitForSeconds(0.1f); numbersUp[3].OnInteract(); }
+                    int button = 0;
+                    int.TryParse(parameters[1], out button);
+                    button -= 1;
+                    while (!buttonTextMesh[button].text.Equals(parameters[2])) { yield return new WaitForSeconds(0.1f); numbersUp[button].OnInteract(); }
                 }
             }
             yield break;
@@ -380,6 +394,87 @@ public class HomophonesScript : MonoBehaviour
                 {
                     yield return null;
                     for(int i = 1; i < 5; i++)
+                    {
+                        if (parameters[i].Equals("1"))
+                        {
+                            mainButtons[0].OnInteract();
+                        }
+                        else if (parameters[i].Equals("2"))
+                        {
+                            mainButtons[1].OnInteract();
+                        }
+                        else if (parameters[i].Equals("3"))
+                        {
+                            mainButtons[2].OnInteract();
+                        }
+                        else if (parameters[i].Equals("4"))
+                        {
+                            mainButtons[3].OnInteract();
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+            }
+            else if (parameters.Length == 4)
+            {
+                if (pressAlright(parameters[1], parameters[2], parameters[3], "1"))
+                {
+                    yield return null;
+                    for (int i = 1; i < 4; i++)
+                    {
+                        if (parameters[i].Equals("1"))
+                        {
+                            mainButtons[0].OnInteract();
+                        }
+                        else if (parameters[i].Equals("2"))
+                        {
+                            mainButtons[1].OnInteract();
+                        }
+                        else if (parameters[i].Equals("3"))
+                        {
+                            mainButtons[2].OnInteract();
+                        }
+                        else if (parameters[i].Equals("4"))
+                        {
+                            mainButtons[3].OnInteract();
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+            }
+            else if (parameters.Length == 3)
+            {
+                if (pressAlright(parameters[1], parameters[2], "1", "1"))
+                {
+                    yield return null;
+                    for (int i = 1; i < 3; i++)
+                    {
+                        if (parameters[i].Equals("1"))
+                        {
+                            mainButtons[0].OnInteract();
+                        }
+                        else if (parameters[i].Equals("2"))
+                        {
+                            mainButtons[1].OnInteract();
+                        }
+                        else if (parameters[i].Equals("3"))
+                        {
+                            mainButtons[2].OnInteract();
+                        }
+                        else if (parameters[i].Equals("4"))
+                        {
+                            mainButtons[3].OnInteract();
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+            }
+            else if (parameters.Length == 2)
+            {
+                if (pressAlright(parameters[1], "1", "1", "1"))
+                {
+                    yield return null;
+                    for (int i = 1; i < 2; i++)
                     {
                         if (parameters[i].Equals("1"))
                         {
