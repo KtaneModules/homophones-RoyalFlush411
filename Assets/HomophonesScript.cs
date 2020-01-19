@@ -499,4 +499,37 @@ public class HomophonesScript : MonoBehaviour
             yield break;
         }
     }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(buttonInformation[i].pressed == true)
+            {
+                buttonInformation[i].pressed = false;
+                buttonTextMesh[i].text = buttonNumbers[i].ToString();
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            int rando = UnityEngine.Random.Range(0, 2);
+            while (!buttonTextMesh[i].text.Equals(correctButtonLabel[i]))
+            {
+                if(rando == 0)
+                {
+                    numbersUp[i].OnInteract();
+                }
+                else
+                {
+                    numbersDown[i].OnInteract();
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            correctButton[i].OnInteract();
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
 }
