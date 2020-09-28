@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: homophones
   title: Homophones
-  description: 'Homophones 1.01
+  description: 'Homophones 1.1
 
     English is a stupid language.
 
@@ -25,6 +25,6 @@ MonoBehaviour:
 
 
     Manual available here: https://ktane.timwi.de/HTML/Homophones.html'
-  version: 1.01
+  version: 1.1
   outputFolder: build
   previewImage: {fileID: 2800000, guid: a04ee364716e2487395aa3ca6f4eea5a, type: 3}
